@@ -288,35 +288,61 @@ Update the following examples to use `useReducer`
 ---
 
 ```jsx
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'TOGGLE_LIGHT':
+      return !state;
+    default:
+      throw new Error(`What?: ${action.type}`)
+  }
+}
+
 const LightSwitch = () => {
-  const [isOn, setIsOn] = React.useState(false);
+  const [state, dispatch] = React.usReducer(reducer, false);
 
   return (
     <>
-      Light is {isOn ? 'on' : 'off'}.
-      <button onClick={() => setIsOn(!isOn)}>Toggle</button>
+      Light is {state ? 'on' : 'off'}.
+      <button onClick={() => dispatch('TOGGLE_LIGHT')}>Toggle</button>
     </>
   );
 };
-```
+
 
 ---
 
-```jsx
+jsx
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'REQUEST_DATA':{
+        return 'loading';
+      }
+      case'RECIEVE_DATA':{
+        return 'idle';
+      }
+      case'RECIEVE_ERROR':{
+        return 'error';
+      }
+      default:
+        throw new Error (`Error:${action.type}`)
+    }
+  }
+
 function App() {
+
   const [status, setStatus] = React.useState('idle');
 
   return (
     <form
       onSubmit={() => {
-        setStatus('loading');
+        dispatch('REQUEST_DATA');
 
         getStatusFromServer()
           .then(() => {
-            setStatus('idle');
+            dispatch('RECIEVE_DATA');
           })
           .catch(() => {
-            setStatus('error');
+            dispatch('RECIEVE_ERROR');
           });
       }}
     >
